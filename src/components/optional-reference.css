@@ -1,0 +1,7 @@
+.optional-reference{display:grid;gap:9px;min-width:0}
+.optional-reference-create{display:flex;gap:8px;align-items:center;font-size:calc(12px * var(--ui-scale,1));font-weight:400;cursor:pointer}
+.optional-reference-create input{width:15px;height:15px;margin:0;accent-color:var(--primary)}
+.optional-reference-existing{border:1px solid var(--border);border-radius:var(--radius);padding:9px 11px;min-width:0}
+.optional-reference-existing summary{font-size:calc(12px * var(--ui-scale,1));font-weight:500;cursor:pointer;color:var(--muted)}
+.optional-reference-existing input,.optional-reference-existing select{margin-top:9px;width:100%}
+.optional-reference>.field-help{margin:0;line-height:1.55}

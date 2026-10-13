@@ -1,0 +1,18 @@
+export const analyticsWords={
+ analyticsDataScope:['資料範圍','数据范围','Data scope'],
+ analyticsScopeOperational:['營運紀錄','运营记录','Operational records'],
+ analyticsScopeByReport:['依報表類型','按报表类型','By report type'],
+ analyticsScopePosted:['已入帳','已入账','Posted entries'],
+ analyticsSeparateCurrencies:['分幣呈現','分币种呈现','By currency'],
+ analyticsBudgetCurrency:['預算幣別','预算币种','Budget currency'],
+ analyticsFinancialStatements:['財務報表','财务报表','Financial statements'],
+ analyticsOperationalReports:['營運分析','运营分析','Operational analysis'],
+ analyticsManagementReports:['管理分析','管理分析','Management reports'],
+ analyticsScopeApproved:['已核准單據','已批准单据','Approved documents'],
+ analyticsScopeBudget:['預算、實際與承諾','预算、实际与承诺','Budget, actuals and commitments'],
+ analyticsScopeSubscriptions:['有效訂閱','有效订阅','Active subscriptions'],
+ analyticsScopePayments:['收付款紀錄','收付款记录','Payment records'],
+ analyticsReportingBasis:['報表口徑','报表口径','Reporting basis'],
+ analyticsPostedBasis:['包含已入帳分錄及其沖銷；資產負債表採截至結束日的累計餘額，其餘明細依所選期間呈現。','包含已入账分录及其冲销；资产负债表采用截至结束日的累计余额，其余明细按所选期间呈现。','Includes posted entries and reversals. The balance sheet uses cumulative balances through the end date; other details use the selected period.'],
+ analyticsNoReports:['目前沒有可顯示的報表','目前没有可显示的报表','No reports available'],
+} as const;

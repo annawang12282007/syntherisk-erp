@@ -1,0 +1,18 @@
+.picker { min-width: 0; }
+.search { display: flex; align-items: center; gap: 8px; position: relative; }
+.search > svg { position: absolute; left: 11px; color: var(--muted); pointer-events: none; }
+.search input { width: 100%; padding-left: 35px; }
+.picker select { width: 100%; max-width: 100%; margin-top: 7px; text-overflow: ellipsis; }
+.status { display: grid; gap: 8px; margin-top: 9px; font-size:calc(12px * var(--ui-scale,1)); }
+.selection { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: var(--background); border: 1px solid var(--border); border-radius: var(--radius); }
+.selection > svg { flex: 0 0 auto; margin-top: 2px; color: var(--primary); }
+.selection > div { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.selection strong { font-size:calc(12px * var(--ui-scale,1)); }
+.address { color: var(--muted); }
+.selection small { font-size:calc(11px * var(--ui-scale,1)); }
+.unavailable { border-style: dashed; }
+.confirm { display: flex; align-items: flex-start; gap: 7px; margin-top: 4px; font-size:calc(11px * var(--ui-scale,1)); }
+.confirm input { width: auto; min-height: 0; margin: 2px 0 0; flex: 0 0 auto; }
+.notice { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; font-size:calc(11px * var(--ui-scale,1)); }
+.notice a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) { .selection { padding: 10px; } }

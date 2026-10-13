@@ -1,0 +1,25 @@
+allowBuilds:
+  '@embedded-postgres/linux-x64': true
+  '@embedded-postgres/linux-arm64': true
+  '@embedded-postgres/windows-x64': true
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  unrs-resolver: true
+overrides:
+  deepmerge-ts: ^8.0.2
+  mysql2: ^3.23.1
+minimumReleaseAgeExclude:
+  - '@next/env@16.4.0'
+  - '@next/eslint-plugin-next@16.4.0'
+  - '@next/swc-darwin-arm64@16.4.0'
+  - '@next/swc-darwin-x64@16.4.0'
+  - '@next/swc-linux-arm64-gnu@16.4.0'
+  - '@next/swc-linux-arm64-musl@16.4.0'
+  - '@next/swc-linux-x64-gnu@16.4.0'
+  - '@next/swc-linux-x64-musl@16.4.0'
+  - '@next/swc-win32-arm64-msvc@16.4.0'
+  - '@next/swc-win32-x64-msvc@16.4.0'
+  - eslint-config-next@16.4.0
+  - next@16.4.0
+

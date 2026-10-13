@@ -1,0 +1,27 @@
+'use client';
+import CloudExport from './cloud-export';
+import {useCompanyWords} from './company-information';
+import {useState} from 'react';
+import {Download,Printer} from 'lucide-react';
+import {useApp} from './context';
+import {ApiError,errorMessage} from './api';
+import {Button,ErrorBanner,Modal} from './primitives';
+import type {Resource} from './types';
+import styles from './export-dialog.module.css';
+
+type Format='csv'|'xlsx'|'json'|'print'|'vcf'|'ics';
+export default function ExportDialog({resource,currentColumns=[],filters,onClose,analytics=false}:{resource?:Resource;currentColumns?:string[];filters:string;onClose:()=>void;analytics?:boolean}){
+ const L=useCompanyWords(),[destination,setDestination]=useState('local');
+ const {t,label,prefs}=useApp(),[format,setFormat]=useState<Format>('xlsx'),[selection,setSelection]=useState('current'),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [from,setFrom]=useState(()=>new URLSearchParams(filters).get('start_date')||new Date().toISOString().slice(0,10)),[to,setTo]=useState(()=>new URLSearchParams(filters).get('end_date')||new Date(Date.now()+365*86400000).toISOString().slice(0,10));const native=format==='vcf'||format==='ics';
+ const allColumns=resource?[...new Set(['id',...resource.fields.map(field=>field.key),...(resource.states?['status']:[]),'version','created_at','updated_at'])]:[];
+ const columns=selection==='current'&&currentColumns.length?currentColumns:allColumns;
+ async function download(){
+  setError('');const params=new URLSearchParams(filters);params.delete('page');params.delete('pageSize');if(resource){params.set('resource',resource.key);params.set('columns',columns.join(','));}
+  if(format==='print'){params.set('mode','table');window.location.assign('/api/print?'+params);return;}
+  if(format==='ics'){params.set('calendar_from',from);params.set('calendar_to',to);params.set('calendar_timezone',prefs.timezone||'America/Los_Angeles');}params.set('format',format);setBusy(true);
+  try{const response=await fetch((analytics?'/api/analytics?':'/api/io?')+params,{credentials:'same-origin'});if(!response.ok){const body=await response.json().catch(()=>({}));throw new ApiError(response.status,body.error?.code||'error',body.error?.message||response.statusText);}const blob=await response.blob(),url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=`${analytics?'syntherisk-report':resource!.key}.${format}`;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);onClose();}catch(e){setError(errorMessage(e,t));}finally{setBusy(false);}
+ }
+ const formats:Format[]=analytics?['xlsx','json']:['xlsx','csv','json','print',...(resource?.key==='contacts'?['vcf' as const]:resource?.key==='events'?['ics' as const]:[])];
+ return <Modal title={`${t('export')} · ${analytics?t('analytics'):label(resource!)}`} onClose={()=>{if(!busy)onClose();}} footer={destination==='local'?<><Button disabled={busy} onClick={onClose}>{t('cancel')}</Button><Button variant="primary" icon={format==='print'?Printer:Download} disabled={busy||(!analytics&&!columns.length)} onClick={()=>void download()}>{busy?t('loading'):t(format==='print'?'exportOpenPrint':'download')}</Button></>:<Button onClick={onClose}>{t('close')}</Button>}><div className={styles.panel}><div className="tabs"><button className={destination==='local'?'active':''} onClick={()=>setDestination('local')}>{L('下載到電腦','Download to device')}</button><button className={destination==='drive'?'active':''} onClick={()=>setDestination('drive')}>{L('Google 格式／雲端硬碟','Google formats / Drive')}</button></div>{destination==='drive'?<><CloudExport resource={analytics?'analytics':resource!.key} columns={columns.join(',')} filters={{...Object.fromEntries(new URLSearchParams(filters)),calendar_from:from,calendar_to:to,calendar_timezone:prefs.timezone||'America/Los_Angeles'}}/>{!analytics&&<label className={styles.fields}>{t('exportFields')}<select value={selection} onChange={e=>setSelection(e.target.value)}><option value="current">{t('exportCurrentFields')}</option><option value="all">{t('exportAllFields')}</option></select></label>}</>:<>{error&&<ErrorBanner message={error}/>}<fieldset disabled={busy}><legend>{t('exportFormat')}</legend><div className={styles.formats}>{formats.map(value=><label key={value} className={format===value?styles.selected:''}><input type="radio" name="export-format" value={value} checked={format===value} onChange={()=>setFormat(value)}/><span><strong>{t('exportFormat_'+value)}</strong><small>{t(analytics&&value==='xlsx'?'exportReportXlsxHint':'exportHint_'+value)}</small></span></label>)}</div></fieldset>{!analytics&&!native&&<label className={styles.fields}>{t('exportFields')}<select value={selection} onChange={event=>setSelection(event.target.value)} disabled={busy}><option value="current">{t('exportCurrentFields')} ({currentColumns.length})</option><option value="all">{t('exportAllFields')} ({allColumns.length})</option></select></label>}{format==='ics'&&<div className={styles.dates}><label>{t('from')}<input type="date" value={from} onChange={event=>setFrom(event.target.value)}/></label><label>{t('exportEndExclusive')}<input type="date" value={to} min={from} onChange={event=>setTo(event.target.value)}/></label></div>}{native&&<p className={styles.scope}>{t('exportNativeFields')}</p>}<p className={styles.scope}>{t(analytics?'exportReportScope':'exportFilteredScope')}</p>{format==='print'&&<p className={styles.scope}>{t('exportPdfHint')}</p>}</>}</div></Modal>;
+}

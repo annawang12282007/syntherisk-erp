@@ -1,0 +1,15 @@
+.task-visibility-fields{min-width:0;padding:15px;margin:8px 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+.task-visibility-fields legend{font-size:calc(13px * var(--ui-scale,1));font-weight:600;padding:0 5px}
+.task-visibility-modes{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+.task-visibility-modes label{display:flex;align-items:center;gap:7px;font-size:calc(13px * var(--ui-scale,1));cursor:pointer}
+.task-visibility-modes input{width:16px;height:16px;margin:0;accent-color:var(--primary)}
+.record-private-option{display:flex;align-items:center;gap:8px;margin:2px 0 16px;font-size:calc(13px * var(--ui-scale,1));font-weight:600;cursor:pointer}
+.record-private-option input{width:16px;height:16px;margin:0;accent-color:var(--primary)}
+.record-visibility-current{font-size:calc(13px * var(--ui-scale,1));margin:0 0 12px;color:var(--muted)}
+.task-viewers>label{display:block;font-size:calc(12px * var(--ui-scale,1));margin:12px 0 8px;color:var(--muted)}
+.task-visibility-fields .field-help{margin:12px 0 0;font-size:calc(12px * var(--ui-scale,1));color:var(--muted);line-height:1.6}
+.task-visibility-panel{margin:22px 0;border-top:1px solid var(--border);padding-top:15px}
+.task-visibility-panel>footer{display:flex;justify-content:flex-end}
+.task-visibility-summary{margin:22px 0;padding-top:15px;border-top:1px solid var(--border)}
+.task-visibility-summary h3{font-size:calc(13px * var(--ui-scale,1))}
+.task-visibility-summary p{font-size:calc(13px * var(--ui-scale,1));margin:8px 0;color:var(--muted)}

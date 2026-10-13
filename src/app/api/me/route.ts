@@ -1,0 +1,5 @@
+import {handle} from '@/lib/http';
+import {query} from '@/lib/db';
+import {initialAdministrator} from '@/lib/company-information';
+import {readPreferences} from '@/lib/preferences';
+export async function GET(r:Request){return handle(r,async ctx=>{const [[user],[workspace],[company],preferences]=await Promise.all([query('SELECT id,name,email FROM "user" WHERE id=$1',[ctx.userId]),query('SELECT id,name,operational_owner_user_id FROM workspaces WHERE id=$1',[ctx.workspaceId]),query('SELECT * FROM companies WHERE id=$1 AND workspace_id=$2',[ctx.companyId,ctx.workspaceId]),readPreferences(ctx)]);const initial=await initialAdministrator(ctx);const publicCompany=Object.fromEntries(Object.entries(company).filter(([key])=>initial||['id','name','base_currency','time_zone','version'].includes(key)));return{initial_administrator:initial,operational_owner_user_id:initial?workspace.operational_owner_user_id:ctx.userId,must_change_password:ctx.mustChangePassword,user,workspace,company:publicCompany,roles:ctx.roles,preferences};});}

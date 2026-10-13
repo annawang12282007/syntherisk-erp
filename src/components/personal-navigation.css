@@ -1,0 +1,13 @@
+.personal-navigation-settings{margin:25px 0}
+.personal-navigation-settings>.field{max-width:440px;margin:18px 0}
+.personal-navigation-options{margin:12px 0;border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+.personal-navigation-options>summary{cursor:pointer;font-size:calc(13px * var(--ui-scale,1));font-weight:600}
+.personal-navigation-list{margin:12px 0;padding:0;list-style:none;display:grid;grid-template-columns:minmax(0,1fr);max-width:640px}
+.personal-navigation-item{display:flex;gap:5px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);min-width:0}
+.personal-navigation-item label{display:flex;align-items:center;gap:8px;font-size:calc(12px * var(--ui-scale,1));flex:1;min-width:0;cursor:pointer}
+.personal-navigation-item label span{overflow-wrap:anywhere}
+.personal-navigation-item input{width:15px;height:15px;margin:0;accent-color:var(--primary);flex-shrink:0}
+.personal-navigation-item button{width:30px;min-width:30px;height:34px}
+.dashboard-pin-preferences{border-top:1px solid var(--border)}
+.recent-navigation[hidden]{display:none}
+@media(max-width:700px){.personal-navigation-list{grid-template-columns:1fr}.personal-navigation-item button{width:40px;min-width:40px;height:42px}}

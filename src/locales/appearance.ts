@@ -1,0 +1,17 @@
+export const appearanceWords={
+ themeSaveHint:['變更會即時預覽；按「儲存」後才會保留為您的個人設定。','更改会实时预览；点击“保存”后才会保留为您的个人设置。','Changes preview immediately. Select Save to keep them as your personal settings.'],
+ themeLightDescription:['固定使用明亮背景與深色文字。','固定使用明亮背景与深色文字。','Always use a light background and dark text.'],
+ themeDarkDescription:['固定使用深色背景與淺色文字。','固定使用深色背景与浅色文字。','Always use a dark background and light text.'],
+ themeSystemDescription:['依裝置的淺色／深色設定自動切換。','根据设备的浅色／深色设置自动切换。','Automatically follow your device’s light or dark setting.'],
+ themeCustomDescription:['自行設定主色、背景、表面、文字與邊框。','自行设置主色、背景、表面、文字与边框。','Choose your own accent, background, surface, text and border colors.'],
+ themeBuiltInPaletteHint:['此模式使用預設配色；如需修改個別顏色，請選擇「自訂」。','此模式使用预设配色；如需修改单个颜色，请选择“自定义”。','This mode uses a preset palette. Select Custom to edit individual colors.'],
+ themeCustomPalette:['自訂配色','自定义配色','Custom palette'],
+ themePalettePreserved:['切換其他模式時，這組自訂顏色會保留。','切换其他模式时，这组自定义颜色会保留。','Your custom colors are preserved when you switch to another mode.'],
+ themeSharedControls:['文字與間距','文字与间距','Text & spacing'],
+ themeSharedControlsHint:['字級、圓角與密度適用於所有主題模式。','字号、圆角与密度适用于所有主题模式。','Font size, corner radius and density apply to every theme mode.'],
+ themePreviewTitle:['外觀示意','外观示意','Appearance sample'],
+ themePreviewHeading:['文字與控制項預覽','文字与控件预览','Text and control preview'],
+ themePreviewLabel:['示意標籤','示意标签','Sample label'],
+ themePreviewHint:['此區僅展示配色、文字與間距，不會建立或儲存工作紀錄。','此区域仅展示配色、文字与间距，不会创建或保存工作记录。','This area only shows colors, text and spacing. It does not create or save work records.'],
+ themePreviewText:['一般文字範例','普通文字示例','Sample body text'],
+} as const;

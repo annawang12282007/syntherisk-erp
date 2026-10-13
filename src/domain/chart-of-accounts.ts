@@ -1,0 +1,278 @@
+/** Company-approved reference workbook, 2026-10-09. Preserve original English titles and legacy account codes. */
+export const standardChart = [
+  {
+    "code": "1000",
+    "name": "Bank — CAD",
+    "name_zh": "银行存款 — 加元",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "公司加元银行帐户。依银行帐户保留明细，按月对帐。\nCompany CAD bank accounts. Keep individual account records and reconcile monthly."
+  },
+  {
+    "code": "1010",
+    "name": "Bank — USD",
+    "name_zh": "银行存款 — 美元",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "公司美元银行帐户。保留 USD 原币余额及 CAD 帐面金额。\nCompany USD bank accounts. Retain both the USD balance and CAD carrying amount."
+  },
+  {
+    "code": "1100",
+    "name": "Accounts receivable",
+    "name_zh": "应收帐款",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "已确认收入但尚未收款的客户款项。按客户及原币追踪。\nRecognized customer revenue not yet collected. Track by customer and original currency."
+  },
+  {
+    "code": "1200",
+    "name": "GST/HST recoverable",
+    "name_zh": "可抵扣 GST/HST",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "待确认登记",
+    "active": true,
+    "notes": "符合抵扣资格并有凭证的 GST/HST。依登记生效日及资格确认。\nEligible, documented GST/HST input tax credits. Confirm registration effective date and eligibility."
+  },
+  {
+    "code": "1210",
+    "name": "QST recoverable",
+    "name_zh": "可抵扣 QST",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "新增／待确认",
+    "active": true,
+    "notes": "魁北克 QST 进项退税。确认登记及抵扣资格后使用。\nQuebec QST input tax refunds. Confirm registration and eligibility before use."
+  },
+  {
+    "code": "1300",
+    "name": "Prepaid expenses",
+    "name_zh": "预付费用",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "年付软体、网域、主机、保险等未耗用服务。按服务期间转成费用。\nUnused services such as annual software, domains, hosting and insurance. Expense over the service period."
+  },
+  {
+    "code": "1500",
+    "name": "Equipment",
+    "name_zh": "设备",
+    "kind": "asset",
+    "account_type": "Asset",
+    "normal_balance": "Debit",
+    "usage_status": "按需启用",
+    "active": true,
+    "notes": "公司持有且跨期使用的电脑及设备。购置时同步规划折旧科目。\nCompany-owned computers and equipment used across periods. Plan depreciation accounts when acquired."
+  },
+  {
+    "code": "2000",
+    "name": "Accounts payable",
+    "name_zh": "应付帐款",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "已取得商品或服务但尚未支付的供应商款项。按供应商追踪。\nUnpaid goods or services received from suppliers. Track by supplier."
+  },
+  {
+    "code": "2100",
+    "name": "Due to employees",
+    "name_zh": "应付员工款项",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "员工代垫、经核准尚未支付的报销款。保留人名及支出凭证。\nEmployee advances and approved unpaid reimbursements. Retain employee details and supporting receipts."
+  },
+  {
+    "code": "2200",
+    "name": "Credit card payable",
+    "name_zh": "应付信用卡款",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "公司信用卡的未付款项。个人信用卡代垫依身分记 2100 或 2400。\nUnpaid company credit card balances. Personal card advances use 2100 or 2400 according to the payer’s capacity."
+  },
+  {
+    "code": "2300",
+    "name": "GST/HST payable",
+    "name_zh": "应付 GST/HST",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "待确认登记",
+    "active": true,
+    "notes": "公司收取、待申报结算的 GST/HST。依实际登记状态使用。\nGST/HST collected and awaiting filing or settlement. Use according to actual registration status."
+  },
+  {
+    "code": "2310",
+    "name": "QST payable",
+    "name_zh": "应付 QST",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "新增／待确认",
+    "active": true,
+    "notes": "公司收取、待申报结算的魁北克 QST。依实际登记状态使用。\nQuebec QST collected and awaiting filing or settlement. Use according to actual registration status."
+  },
+  {
+    "code": "2400",
+    "name": "Due to shareholders",
+    "name_zh": "应付股东款项",
+    "kind": "liability",
+    "account_type": "Liability",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "股东代垫或借款。按股东及 CAD／USD 建立明细，记录约定还款币别。\nShareholder advances or loans. Track by shareholder and CAD/USD, including the agreed repayment currency."
+  },
+  {
+    "code": "3000",
+    "name": "Share capital",
+    "name_zh": "股本",
+    "kind": "equity",
+    "account_type": "Equity",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "依实际股份发行文件确认的股本。与股东借款、代垫款分别记录。\nShare capital supported by actual share issuance documents. Record separately from shareholder loans and advances."
+  },
+  {
+    "code": "3100",
+    "name": "Retained earnings",
+    "name_zh": "留存收益／累积亏损",
+    "kind": "equity",
+    "account_type": "Equity",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "累积净损益及股利等变动。新公司起始通常为 0；累积亏损可为借方余额。\nAccumulated profits, losses and dividend movements. A new company normally starts at zero; accumulated losses may have a debit balance."
+  },
+  {
+    "code": "4000",
+    "name": "Service revenue",
+    "name_zh": "服务收入",
+    "kind": "revenue",
+    "account_type": "Revenue",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "公司已提供服务、符合收入确认条件的收入。收款与确认收入分别判断。\nRevenue from services provided that meet recognition criteria. Assess collection and revenue recognition separately."
+  },
+  {
+    "code": "4900",
+    "name": "Foreign exchange gain",
+    "name_zh": "汇兑利益",
+    "kind": "revenue",
+    "account_type": "Other income",
+    "normal_balance": "Credit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "外币银行、应收款及应付款换算或结清所产生的汇兑利益。\nForeign exchange gains from translation or settlement of foreign-currency bank, receivable and payable balances."
+  },
+  {
+    "code": "5000",
+    "name": "Market research and validation",
+    "name_zh": "市场调查与验证费",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留并整并",
+    "active": true,
+    "notes": "问卷奖励、访谈与已耗用的市场研究平台费。整并原 5100 的市调部分。\nSurvey incentives, interviews and consumed market research platform services. Includes the market research portion of former account 5100."
+  },
+  {
+    "code": "5100",
+    "name": "Research services",
+    "name_zh": "研究服务费（原科目）",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "建议合并至 5000",
+    "active": false,
+    "notes": "市场研究服务并入 5000。技术研发支出另评估分类，已用历史纪录保留。\nMarket research services are consolidated into 5000. Assess technical R&D costs separately. Retain historical records."
+  },
+  {
+    "code": "5200",
+    "name": "IT and web services",
+    "name_zh": "资讯及网站服务费",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留并整并",
+    "active": true,
+    "notes": "软体、API、云端、网域及主机服务。整并原 5300；未耗用部分先列 1300。\nSoftware, API, cloud, domain and hosting services. Includes former account 5300; unused services are initially recorded in 1300."
+  },
+  {
+    "code": "5300",
+    "name": "Domains and hosting",
+    "name_zh": "网域及主机费（原科目）",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "建议合并至 5200",
+    "active": false,
+    "notes": "新支出依服务耗用情况记 5200 或 1300。已用历史纪录保留。\nRecord new spending in 5200 or 1300 according to service consumption. Retain historical records."
+  },
+  {
+    "code": "5400",
+    "name": "Professional fees",
+    "name_zh": "专业服务费",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "法律、会计及顾问服务费。涉及取得资产的成本另评估。\nLegal, accounting and consulting fees. Assess costs related to asset acquisitions separately."
+  },
+  {
+    "code": "5500",
+    "name": "Administrative expenses",
+    "name_zh": "行政费用",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "办公用品、一般行政支出及政府规费。公司成立费用保留日期与明细。\nOffice supplies, general administration and government fees. Retain dates and details of incorporation costs."
+  },
+  {
+    "code": "5600",
+    "name": "Bank charges",
+    "name_zh": "银行及付款手续费",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "银行、汇款及付款处理手续费。与外币换算产生的汇兑损益分别记录。\nBank, remittance and payment processing fees. Record separately from foreign exchange gains and losses."
+  },
+  {
+    "code": "5900",
+    "name": "Foreign exchange loss",
+    "name_zh": "汇兑损失",
+    "kind": "expense",
+    "account_type": "Expense",
+    "normal_balance": "Debit",
+    "usage_status": "保留",
+    "active": true,
+    "notes": "外币银行、应收款及应付款换算或结清所产生的汇兑损失。\nForeign exchange losses from translation or settlement of foreign-currency bank, receivable and payable balances."
+  }
+] as const;

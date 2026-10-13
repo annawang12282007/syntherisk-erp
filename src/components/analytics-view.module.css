@@ -1,0 +1,64 @@
+.filterPanel {
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.ownerFilter {min-width:170px;max-width:280px;display:flex;flex-direction:column;gap:6px;font-size:calc(12px * var(--ui-scale,1));flex:1;}
+.ownerFilter details {border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:10px 12px;}
+.ownerFilter summary {cursor:pointer;overflow-wrap:anywhere;}
+.ownerOptions {display:flex;flex-direction:column;gap:9px;max-height:200px;overflow-y:auto;padding-top:12px;}
+.ownerOptions label {display:flex!important;flex-direction:row!important;align-items:center;gap:8px;font-size:calc(12px * var(--ui-scale,1));}
+.ownerOptions input {width:16px!important;min-height:16px!important;}
+.filterPanel :global(.report-filters) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.filterContext {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 10px 17px;
+  border-top: 1px solid var(--border);
+}
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+  font-size:calc(11px * var(--ui-scale,1));
+  line-height: 1.6;
+}
+.metadata > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.metadata dt { color: var(--muted); }
+.metadata dt::after { content: ':'; }
+.metadata dd { margin: 0; color: var(--text); font-weight: 500; }
+.reportSection + .reportSection { margin-top: 32px; }
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin-bottom: 14px;
+}
+.sectionHeader h2 { margin: 0 0 5px; font-size:calc(15px * var(--ui-scale,1)); font-weight: 600; }
+.card h3 { margin: 0; font-size:calc(14px * var(--ui-scale,1)); font-weight: 600; }
+.card > .metadata { margin: -7px 0 16px; }
+.definition { max-width: 440px; font-size:calc(11px * var(--ui-scale,1)); color: var(--muted); }
+.definition summary { cursor: pointer; text-align: right; }
+.definition summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+.definition p { margin: 8px 0 0; line-height: 1.7; }
+@media (max-width: 600px) {
+  .filterContext { padding: 9px 12px; gap: 6px 16px; }
+  .metadata { gap: 5px 14px; }
+  .sectionHeader { align-items: flex-start; }
+  .definition { width: 100%; }
+  .definition summary { text-align: left; }
+}

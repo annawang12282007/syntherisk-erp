@@ -1,0 +1,18 @@
+export const optionalReferenceWords={
+ reference_notes:['未連結參考文字','未关联参考文字','Unlinked reference text'],
+ referenceProjectPlaceholder:['輸入專案名稱或備註','输入项目名称或备注','Enter a project name or note'],
+ referenceMeetingPlaceholder:['輸入會議名稱或備註','输入会议名称或备注','Enter a meeting name or note'],
+ referenceExisting:['連結既有紀錄','关联现有记录','Link an existing record'],
+ referenceCreateProject:['儲存時建立專案','保存时创建项目','Create project when saved'],
+ referenceCreateMeeting:['儲存時建立會議','保存时创建会议','Create meeting when saved'],
+ referenceTextHint:['此文字會隨本筆紀錄儲存；未勾選建立時，不會新增或連結其他紀錄。','此文字会随本条记录保存；未勾选创建时，不会新增或关联其他记录。','This text is saved with this record. It will not create or link another record unless selected above.'],
+ referenceCreateHint:['確認儲存本筆紀錄時，才會建立並連結新紀錄。','确认保存本条记录时，才会创建并关联新记录。','The new record will be created and linked only when you save this record.'],
+ referenceLinkedHint:['已連結既有紀錄。改選「未劃分」後可輸入文字或建立新紀錄。','已关联现有记录。改选“未划分”后可输入文字或创建新记录。','An existing record is linked. Select Unassigned to enter text or create a new record.'],
+ reconsider:['覆議','复议','Reconsider'],
+ reconsiderHint:['建立新的待議草案，保留原決議及其內容。','创建新的待议草案，保留原决议及其内容。','Create a new proposed resolution while preserving the original resolution and its content.'],
+ reconsiderTitleHint:['留空時沿用原決議標題。','留空时沿用原决议标题。','Leave blank to keep the original resolution title.'],
+ reconsiderContentHint:['留空時沿用原決議內容。','留空时沿用原决议内容。','Leave blank to keep the original resolution content.'],
+ reconsiderMeetingHint:['勾選後，確認覆議時才建立會議並連結新草案。','勾选后，确认复议时才创建会议并关联新草案。','When selected, confirming reconsideration creates a meeting linked to the new draft.'],
+ error_inline_reference_unsupported:['此欄位不支援以文字或建立新紀錄的方式填寫。','此字段不支持以文字或创建新记录的方式填写。','This field does not support unlinked text or creating a new record.'],
+ error_inline_reference_conflict:['請選擇連結既有紀錄，或改用文字／建立新紀錄，兩者不可同時設定。','请选择关联现有记录，或改用文字／创建新记录，两者不可同时设置。','Choose either an existing linked record or unlinked text with optional creation.'],
+} as const;

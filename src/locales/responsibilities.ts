@@ -1,0 +1,16 @@
+export const responsibilityWords={
+ responsibleMembers:['負責人','负责人','Owners'],
+ responsible_user_ids:['負責人','负责人','Owners'],
+ responsible_users:['負責人','负责人','Owners'],
+ responsibilitySearch:['搜尋成員','搜索成员','Search members'],
+ responsibilitySelected:['已選負責人','已选负责人','Selected owners'],
+ responsibilityHint:['可選擇多位工作區成員。','可选择多位工作区成员。','Select one or more workspace members.'],
+ responsibilityClaimant:['報帳人須保留為負責人；可加入其他協作成員。','报销人须保留为负责人；可添加其他协作成员。','The claimant must remain an owner. You may add other collaborators.'],
+ responsibilityUnavailable:['成員資料未提供','成员资料未提供','Member details unavailable'],
+ responsibilityInactive:['已停用','已停用','Inactive'],
+ responsibilities:['負責人設定','负责人设置','Owner assignments'],
+ error_responsibility_not_supported:['此類紀錄不支援負責人設定。','此类记录不支持负责人设置。','This record type does not support owner assignments.'],
+ error_responsibility_primary_mismatch:['主要負責人必須包含在已選成員中。','主要负责人必须包含在所选成员中。','The primary owner must be included among the selected members.'],
+ error_invalid_responsible_member:['新增負責人必須是有效的工作區成員。','新增负责人必须是有效的工作区成员。','New owners must be active workspace members.'],
+ error_responsibility_assignment_forbidden:['您沒有變更負責人的權限。','您无权更改负责人。','You do not have permission to change owners.'],
+} as const;

@@ -1,0 +1,27 @@
+'use client';
+import {useCallback,useEffect,useState} from 'react';
+import {useApp} from './context';
+import {useCompanyWords} from './company-information';
+import {api,post,errorMessage} from './api';
+import {Button,ErrorBanner,Modal} from './primitives';
+type Settings={daily_enabled:boolean;report_time:string;timezone:string;topics:string[];instruction:string;version:number};
+type Personal={settings:Settings;latest_summary?:string;reports:{local_date:string;run_id:string|null;status:string;run_status:string|null}[]};
+export function PersonalSettings(){
+ const {t,notify}=useApp(),L=useCompanyWords(),[value,setValue]=useState<Settings>(),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const load=useCallback(()=>api<Personal>('/api/personal-assistant').then(d=>setValue(d.settings)).catch(e=>setError(errorMessage(e,t))),[t]);useEffect(()=>{void load();},[load]);
+ if(!value)return error?<ErrorBanner message={error}/>:<p>{t('loading')}</p>;
+ return <section className="assistant-create">{error&&<ErrorBanner message={error}/>}<p>{L('日报默认关闭。开启后，系统按您的时区每天生成一次站内报告，费用计入个人月度额度；不会自动发送邮件。额度不足时跳过，重新开启不会补跑过去的报告。','Daily reports are off by default. Enable one in-app report per day in your time zone, billed to your personal monthly allowance. No email is sent. Reports are skipped when the allowance is exhausted; past reports are not backfilled.')}</p>
+ <label className="check-line"><input type="checkbox" checked={value.daily_enabled} onChange={e=>setValue({...value,daily_enabled:e.target.checked})}/>{L('自动生成每日报告','Generate daily reports automatically')}</label><div className="form-grid"><label>{L('报告时间','Report time')}<input type="time" value={value.report_time} onChange={e=>setValue({...value,report_time:e.target.value})}/></label><label>{L('时区','Time zone')}<select value={value.timezone} onChange={e=>setValue({...value,timezone:e.target.value})}>{[...new Set([value.timezone,'America/Los_Angeles','America/New_York','America/Toronto','America/Vancouver','Asia/Shanghai','Asia/Taipei','Europe/London','UTC'])].map(z=><option key={z}>{z}</option>)}</select></label></div>
+ <fieldset><legend>{L('报告包含哪些内容','Report topics')}</legend><div className="check-grid">{[['tasks',L('未完成与逾期任务','Open and overdue tasks')],['requests',L('待处理请求','Pending requests')],['handoffs',L('待接收交接','Pending handoffs')],['reviews',L('待审批事项','Pending reviews')],['events',L('近期日程','Upcoming events')],['subscriptions',L('订阅续费提醒','Subscription renewals')]].map(([key,name])=><label key={key}><input type="checkbox" checked={value.topics.includes(key)} onChange={e=>setValue({...value,topics:e.target.checked?[...value.topics,key]:value.topics.filter(v=>v!==key)})}/>{name}</label>)}</div></fieldset>
+ <label>{L('个人报告偏好','Personal report preferences')}<textarea rows={5} maxLength={2000} value={value.instruction} onChange={e=>setValue({...value,instruction:e.target.value})} placeholder={L('例如：简洁列出最优先的三件事，再列出需要他人回应的事项。','For example: start with my top three priorities, then items waiting for others.')}/></label>
+ <Button variant="primary" disabled={busy||!value.topics.length||!value.report_time} onClick={async()=>{setBusy(true);setError('');try{await post('/api/personal-assistant',value);await load();notify(t('saved'));}catch(e){setError(errorMessage(e,t));}finally{setBusy(false);}}}>{t('save')}</Button></section>;
+}
+export function PersonalAssistantWidget({editing=false}:{editing?:boolean}){
+ const {t,navigate}=useApp(),L=useCompanyWords(),[data,setData]=useState<Personal>(),[settings,setSettings]=useState(false),[error,setError]=useState('');
+ const load=useCallback(()=>api<Personal>('/api/personal-assistant').then(setData).catch(e=>setError(errorMessage(e,t))),[t]);useEffect(()=>{void load();},[load]);
+ return <><header className="widget-heading"><h2>{t('personalAssistant')}</h2><Button onClick={()=>setSettings(true)}>{L('自定义日报','Customize daily reports')}</Button></header><div className="assistant-widget">{error&&<ErrorBanner message={error}/>}<p>{L('汇总未完成任务、待处理事项和近期日程。','Summarize open tasks, pending work and upcoming events.')}</p><Button variant="primary" onClick={()=>navigate('/personal-assistant')}>{L('打开个人助理','Open personal assistant')}</Button>{data&&<p className="muted">{data.settings.daily_enabled?L('日报已开启','Daily report enabled')+' · '+data.settings.report_time+' · '+data.settings.timezone:L('自动日报已关闭','Automatic daily reports are off')}</p>}
+ {data?.latest_summary&&<div className="assistant-report-summary" style={{whiteSpace:'pre-wrap',maxHeight:260,overflowY:'auto'}}>{data.latest_summary}</div>}
+ {data?.reports.slice(0,3).map(r=><p key={r.local_date}>{r.local_date.slice(0,10)} · {r.run_id&&r.run_status?<button className="text-button" onClick={()=>navigate('/personal-assistant?run='+r.run_id)}>{r.run_status==='completed'?L('查看日报','Read report'):r.run_status==='failed'?L('查看未完成原因','View failure details'):L('查看处理进度','View progress')}</button>:r.status==='skipped_budget'?L('本月额度已用完，已跳过','Skipped: monthly allowance exhausted'):L('报告暂不可用','Report unavailable')}</p>)}
+ {editing&&<p className="muted small">{L('使用卡片上方的显示／隐藏按钮控制此组件。日报开关独立设置，隐藏卡片不会停止日报。','Use the card visibility control to show or hide this widget. Daily reports are configured separately; hiding the card does not stop them.')}</p>}</div>
+ {settings&&<Modal wide title={L('个人日报设置','Personal daily report settings')} onClose={()=>{setSettings(false);void load();}}><PersonalSettings/></Modal>}</>;
+}

@@ -1,0 +1,78 @@
+import {signIn} from './helpers/sign-in';
+import {test,expect,type APIRequestContext,type BrowserContext,type Page} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+import {randomUUID} from 'node:crypto';
+const origin=process.env.PLAYWRIGHT_BASE_URL??'http://localhost:3000';
+let request:APIRequestContext,cookies:Awaited<ReturnType<BrowserContext['cookies']>>,original:Record<string,unknown>;
+test.beforeAll(async({playwright})=>{test.setTimeout(120000);const demo=JSON.parse(await readFile('data/demo-credentials.json','utf8'));const credential=demo.users[0];request=await playwright.request.newContext({baseURL:origin,extraHTTPHeaders:{Origin:origin}});expect((await signIn(request,{email:credential.email,password:credential.password})).status()).toBe(200);cookies=(await request.storageState()).cookies;original=(await(await request.get('/api/preferences')).json()).data;await request.put('/api/preferences',{data:{locale:'en',timezone:'America/Los_Angeles',theme:{mode:'light'}}});});
+test.beforeEach(async({context})=>context.addCookies(cookies));
+test.afterAll(async()=>{if(request){await request.put('/api/preferences',{data:original});await request.dispose();}});
+async function ready(page:Page){await expect(page.locator('.sidebar')).toBeVisible();await expect(page.locator('.table-loading,.page-loading,.boot-screen,main .loading')).toHaveCount(0);}
+test('bank outflows accept signed minor units while subscription charges reject negatives',async({page})=>{
+ await page.goto('/data/bank_transactions?new=1');await ready(page);
+ const bankAmount=page.getByRole('dialog').locator('#field-amount_minor');
+ await bankAmount.fill('-12500');expect(await bankAmount.evaluate((input:HTMLInputElement)=>input.checkValidity())).toBe(true);
+ await bankAmount.fill('12500');expect(await bankAmount.evaluate((input:HTMLInputElement)=>input.checkValidity())).toBe(true);
+ await bankAmount.fill('-125.50');expect(await bankAmount.evaluate((input:HTMLInputElement)=>input.checkValidity())).toBe(false);
+ await page.goto('/data/subscriptions?new=1');await ready(page);
+ const charge=page.getByRole('dialog').locator('#field-amount_minor');
+ await charge.fill('-12500');expect(await charge.evaluate((input:HTMLInputElement)=>input.checkValidity())).toBe(false);
+ await charge.fill('12500');expect(await charge.evaluate((input:HTMLInputElement)=>input.checkValidity())).toBe(true);
+});
+test('dashboard keyboard reorder, width, visibility, named preset and second browser persistence',async({page,browser})=>{await page.goto('/');await ready(page);await page.getByRole('button',{name:'Edit layout',exact:true}).click();const first=page.locator('.dashboard-widget').first();await first.getByRole('button',{name:'Move down',exact:true}).click();await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.layout?.widgets||[])[1]?.id).toBe('tasks');const moved=page.locator('.dashboard-widget').nth(1);await moved.getByRole('combobox',{name:'Width',exact:true}).selectOption('full');await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.layout?.widgets||[]).find((w:{id:string})=>w.id==='tasks')?.width).toBe('full');await moved.getByRole('button',{name:'Hide',exact:true}).click();await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.layout?.widgets||[]).find((w:{id:string})=>w.id==='tasks')?.visible).toBe(false);await page.getByRole('button',{name:'Save named layout',exact:true}).click();const name=`Browser layout ${randomUUID().slice(0,6)}`;await page.getByRole('dialog').getByRole('textbox').fill(name);await page.getByRole('dialog').getByRole('button',{name:'Set as default'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);await page.getByRole('button',{name:'Finish editing'}).click();await page.reload();await ready(page);await expect(page.locator('.dashboard-widget').filter({has:page.getByRole('heading',{name:/My tasks/})})).toHaveCount(0);const fresh=await browser.newContext();await fresh.addCookies(cookies);const freshPage=await fresh.newPage();await freshPage.goto(origin);await ready(freshPage);await expect(freshPage.locator('.dashboard-widget').filter({has:freshPage.getByRole('heading',{name:/My tasks/})})).toHaveCount(0);await freshPage.getByRole('button',{name:'Edit layout'}).click();await freshPage.getByRole('button',{name:'Restore standard layout'}).click();await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.layout?.widgets||[])[0]?.id).toBe('tasks');await freshPage.getByRole('combobox',{name:'My layouts'}).selectOption(name);await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.layout?.widgets||[])[1]?.visible).toBe(false);await freshPage.screenshot({path:'docs/qa/browser/layout-keyboard-persistence.png',fullPage:true});await fresh.close();});
+test('saved table widths, order, visibility and filter survive reload and a new context',async({page,browser})=>{await page.goto('/data/contacts');await ready(page);await page.getByRole('textbox',{name:'Search',exact:true}).fill('demo');await page.getByRole('button',{name:'Columns & view'}).click();const dialog=page.getByRole('dialog');const rows=dialog.locator('.column-options>div');await rows.first().getByRole('spinbutton').fill('310');await rows.first().getByRole('button',{name:'Move down'}).click();const last=rows.last();await last.getByRole('checkbox').uncheck();await dialog.getByRole('button',{name:'Save personal view'}).click();await expect(dialog).toHaveCount(0);await expect.poll(async()=>((await(await request.get('/api/preferences')).json()).data.views?.contacts?.widths||{}).name).toBe(310);await page.reload();await ready(page);await expect(page.getByRole('textbox',{name:'Search',exact:true})).toHaveValue('demo');await page.getByRole('button',{name:'Columns & view'}).click();await expect(page.getByRole('dialog').locator('.column-options>div').nth(1).getByRole('spinbutton')).toHaveValue('310');await page.keyboard.press('Escape');const fresh=await browser.newContext();await fresh.addCookies(cookies);const next=await fresh.newPage();await next.goto(`${origin}/data/contacts`);await ready(next);await expect(next.getByRole('textbox',{name:'Search',exact:true})).toHaveValue('demo');await next.getByRole('button',{name:'Columns & view'}).click();await expect(next.getByRole('dialog').locator('.column-options>div').nth(1).getByRole('spinbutton')).toHaveValue('310');await next.screenshot({path:'docs/qa/browser/table-personal-view.png',fullPage:true});await fresh.close();});
+test('calendar month week day agenda and three viewer timezones use persistent preferences',async({page})=>{await page.goto('/calendar');await ready(page);for(const zone of ['America/Los_Angeles','America/Montreal','Asia/Taipei']){await page.getByRole('combobox',{name:'Display timezone',exact:true}).selectOption(zone);await expect.poll(async()=>(await(await request.get('/api/preferences')).json()).data.timezone).toBe(zone);for(const mode of ['Week','Day','Agenda','Month']){await page.getByRole('button',{name:mode,exact:true}).click();await ready(page);await expect(page.locator(mode==='Month'?'.calendar-grid':mode==='Agenda'?'.agenda-list':'.time-grid')).toBeVisible();}}await page.reload();await ready(page);await expect(page.getByRole('combobox',{name:'Display timezone',exact:true})).toHaveValue('Asia/Taipei');});
+
+async function createRecord(resource:string,data:Record<string,unknown>){const response=await request.post(`/api/data/${resource}`,{data});expect(response.ok(),`${resource} creation`).toBeTruthy();return (await response.json()).data as {id:string;version:number};}
+test('calendar interview and financial sources open actual linked records and contact work context',async({page})=>{
+ const token=randomUUID().slice(0,8),month=new Date().toISOString().slice(0,7),day=`${month}-15`,end=`${month}-16`;
+ const contact=await createRecord('contacts',{name:`Calendar contact ${token}`});
+ const project=await createRecord('projects',{name:`Calendar project ${token}`,goal:'Browser acceptance'});
+ const event=await createRecord('events',{title:`Meeting ${token}`,all_day:true,start_date:day,end_date:end,time_zone:'America/Los_Angeles',contact_id:contact.id,project_id:project.id});
+ const interview=await createRecord('interviews',{title:`Interview ${token}`,event_id:event.id,contact_id:contact.id,project_id:project.id});
+ const invoice=await createRecord('customer_invoices',{title:`Invoice ${token}`,currency:'USD',due_date:day});
+ const task=await createRecord('tasks',{title:`Context task ${token}`,project_id:project.id,due_date:day});
+ const claim=await createRecord('expense_claims',{title:`Context expense ${token}`,project_id:project.id,currency:'USD'});
+ expect(interview.id&&invoice.id&&task.id&&claim.id).toBeTruthy();
+ await page.goto('/calendar');await ready(page);
+ await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('interviews');
+ await expect(page.locator('.calendar-event').filter({hasText:`Interview ${token}`})).toHaveCount(1);
+ await expect(page.locator('.calendar-event').filter({hasText:`Invoice ${token}`})).toHaveCount(0);
+ await page.locator('.calendar-event').filter({hasText:`Interview ${token}`}).click();
+ await expect(page.getByRole('dialog',{name:`Interview ${token}`,exact:true})).toBeVisible();
+ await page.getByRole('dialog',{name:`Interview ${token}`,exact:true}).getByRole('button',{name:`Meeting ${token}`,exact:true}).click();
+ await expect(page.getByRole('dialog',{name:`Meeting ${token}`,exact:true})).toBeVisible();
+ await expect(page.getByRole('dialog',{name:`Meeting ${token}`,exact:true}).getByText('America/Los_Angeles',{exact:true})).toBeVisible();
+ await page.keyboard.press('Escape');await page.keyboard.press('Escape');
+ await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('finance');
+ await page.locator('.calendar-event').filter({hasText:`Invoice ${token}`}).click();
+ await expect(page.getByRole('dialog',{name:`Invoice ${token}`,exact:true})).toBeVisible();await page.keyboard.press('Escape');
+ await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('events');await expect(page.locator('.calendar-event').filter({hasText:`Interview ${token}`})).toHaveCount(0);
+ await page.goto(`/data/contacts?record=${contact.id}`);await ready(page);
+ await page.getByRole('dialog').getByRole('button',{name:/Related records/}).click();
+ await expect(page.getByRole('dialog').getByRole('button',{name:new RegExp(`Calendar project ${token}`)})).toBeVisible();
+ await expect(page.getByRole('dialog').getByRole('button',{name:new RegExp(`Context expense ${token}`)})).toBeVisible();
+ await page.getByRole('dialog').getByRole('button',{name:new RegExp(`Context task ${token}`)}).click();
+ await expect(page.getByRole('dialog',{name:`Context task ${token}`,exact:true})).toBeVisible();
+ await page.screenshot({path:'docs/qa/browser/contact-context-task.png',fullPage:true});
+});
+test('engagement board isolates selected pipeline and saves a real stage movement',async({page})=>{
+ const token=randomUUID().slice(0,8);const pipeline=await createRecord('pipelines',{name:`Browser pipeline ${token}`,kind:'custom'});
+ const first=await createRecord('pipeline_stages',{name:`First ${token}`,pipeline_id:pipeline.id,position:1,required_next_step:false});
+ const second=await createRecord('pipeline_stages',{name:`Second ${token}`,pipeline_id:pipeline.id,position:2,required_next_step:true});
+ const engagement=await createRecord('engagements',{title:`Board record ${token}`,pipeline_id:pipeline.id,stage_id:first.id,next_step:'Prepare meeting',currency:'USD'});
+ await page.goto('/data/engagements');await ready(page);
+ await page.getByRole('combobox',{name:'Engagement pipeline',exact:true}).selectOption(pipeline.id);
+ await page.getByRole('button',{name:'Board',exact:true}).click();
+ await expect(page.locator('.kanban>section')).toHaveCount(2);
+ const card=page.locator('.kanban article').filter({hasText:`Board record ${token}`});await expect(card).toBeVisible();
+ await card.getByRole('combobox').selectOption(second.id);
+ await expect.poll(async()=>(await(await request.get(`/api/data/engagements/${engagement.id}`)).json()).data.stage_id).toBe(second.id);
+ await page.reload();await ready(page);await expect(page.getByRole('combobox',{name:'Engagement pipeline',exact:true})).toHaveValue(pipeline.id);
+ await page.getByRole('button',{name:'Board',exact:true}).click();await expect(page.locator('.kanban>section').filter({hasText:`Second ${token}`}).getByRole('button',{name:`Board record ${token}`,exact:true})).toBeVisible();
+ await page.screenshot({path:'docs/qa/browser/pipeline-stage-movement.png',fullPage:true});
+ await page.locator('.sidebar').getByRole('button',{name:'Work overview',exact:true}).click();await ready(page);
+ await expect(page.locator('.recent-navigation').getByRole('button',{name:'Engagements',exact:true})).toBeVisible();
+ await page.reload();await ready(page);
+ await expect(page.locator('.recent-navigation').getByRole('button',{name:'Engagements',exact:true})).toBeVisible();
+});

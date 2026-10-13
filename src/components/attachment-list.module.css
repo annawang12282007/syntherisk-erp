@@ -1,0 +1,8 @@
+.list { display: grid; gap: 8px; }
+.file { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); min-width: 0; }
+.file a { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 0; color: var(--text); text-decoration: none; }
+.file a:hover { color: var(--primary); }
+.file a span { overflow-wrap: anywhere; flex: 1; min-width: 0; }
+.file svg { flex: 0 0 auto; }
+.file button { flex: 0 0 auto; }
+@media (max-width: 600px) { .file { flex-direction: column; align-items: stretch; } .file button { align-self: flex-end; } }

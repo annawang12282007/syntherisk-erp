@@ -1,0 +1,11 @@
+import {createHash,randomUUID} from 'node:crypto';
+import {z} from 'zod';
+import {handle} from '@/lib/http';
+import {DomainError} from '@/lib/context';
+import {query,transaction} from '@/lib/db';
+import {find} from '@/domain/core';
+import {assertAccess} from '@/domain/service';
+import {putFile,removeFile} from '@/lib/storage';
+import {attachmentDownload,attachmentImage} from '@/lib/attachment-download';
+export async function GET(r:Request){return handle(r,async ctx=>{const params=new URL(r.url).searchParams;const id=params.get('id');if(!id){const resource=params.get('resource')??'';const recordId=z.uuid().parse(params.get('record_id'));await assertAccess(ctx,resource,recordId,'read');return query('SELECT id,filename,mime_type,byte_size,sha256,created_at FROM attachments WHERE workspace_id=$1 AND resource=$2 AND record_id=$3 ORDER BY created_at',[ctx.workspaceId,resource,recordId]);}if(['image','image-download'].includes(params.get('format')??''))return attachmentImage(ctx,z.uuid().parse(id),params.get('width'),params.get('format')==='image-download');return attachmentDownload(ctx,z.uuid().parse(id),params.get('format')==='checksum');});}
+export async function POST(r:Request){return handle(r,async ctx=>{if(Number(r.headers.get('content-length')??0)>21_000_000)throw new DomainError(413,'TOO_LARGE');const f=await r.formData();const resource=String(f.get('resource')??'');const recordId=z.uuid().parse(f.get('record_id'));await assertAccess(ctx,resource,recordId,'write');const file=f.get('file');if(!(file instanceof File)||file.size>20_000_000||file.size===0)throw new DomainError(400,'INVALID_FILE');const bytes=Buffer.from(await file.arrayBuffer());const key=`${ctx.workspaceId}/${randomUUID()}`;const mime=file.type||'application/octet-stream';await putFile(key,bytes,mime);try{return await transaction(async client=>{await find(client,ctx,resource,recordId,true,true);return(await client.query('INSERT INTO attachments(workspace_id,company_id,resource,record_id,filename,mime_type,byte_size,sha256,storage_key,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id,filename,byte_size,sha256',[ctx.workspaceId,ctx.companyId,resource,recordId,file.name.slice(0,255).replace(/[\r\n]/g,''),mime,bytes.length,createHash('sha256').update(bytes).digest('hex'),key,ctx.userId])).rows[0];});}catch(error){await removeFile(key);throw error;}});}

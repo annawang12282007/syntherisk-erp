@@ -1,0 +1,52 @@
+name: verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-bookworm
+        env:
+          POSTGRES_USER: erp_test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: erp_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U erp_test -d erp_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://erp_test:test@127.0.0.1:5432/erp_test
+      APP_URL: http://localhost:3030
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-test.txt
+      - run: python -m pip install -r requirements-test.txt
+      - run: pnpm install --frozen-lockfile
+      - name: Generate disposable build secrets
+        run: |
+          echo "BETTER_AUTH_SECRET=$(openssl rand -hex 48)" >> "$GITHUB_ENV"
+          echo "INTEGRATION_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+      - run: pnpm typecheck
+      - run: pnpm test:node
+      - run: pnpm test:isolated
+      - run: pnpm build
+      - run: pnpm release:check
+      - name: Scan tracked source
+        run: node scripts/public-release-scan.mjs --staged

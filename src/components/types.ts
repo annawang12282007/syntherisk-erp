@@ -1,0 +1,11 @@
+import type { Locale } from '@/locales';
+export type Row = Record<string, unknown> & { id:string; version:number };
+export type Field = {key:string;label:readonly string[];type:string;required?:boolean;options?:string[];ref?:string;readonly?:boolean};
+export type Resource = {key:string;label:readonly string[];module:string;fields:Field[];titleField:string;states?:string[];actions?:string[];signatureActions?:string[];capabilities?:{read:boolean;create:boolean;edit?:boolean};privacy_supported?:boolean;signature_requests_supported?:boolean;readonly?:boolean;actionFields?:Record<string,Field[]>;parent?:string;hidden?:boolean};
+export type Theme = {mode:'light'|'dark'|'system'|'custom';primary:string;background:string;surface:string;text:string;border:string;fontSize:number;uiFontSize?:number;radius:number;density:'compact'|'standard'|'comfortable'};
+export type LayoutWidget = {id:string;width:'half'|'full';visible:boolean};
+export type ViewPrefs = {columns?:string[];order?:string[];widths?:Record<string,number>;sort?:string;direction?:'asc'|'desc';pageSize?:number;filters?:Record<string,string|boolean>};
+export type Preferences = {locale?:Locale;timezone?:string;theme?:Theme;themePresets?:{name:string;theme:Theme}[];layout?:{widgets:LayoutWidget[];name?:string};layouts?:{name:string;widgets:LayoutWidget[]}[];quickCreate?:{order?:string[];hidden?:string[]};dashboardNavigation?:{mode:'recent'|'pinned'|'hidden';pinned?:string[]};sidebar?:{collapsed?:boolean;order?:string[];hidden?:string[];shortcuts?:string[]};views?:Record<string,ViewPrefs>;notificationPreferences?:Record<string,boolean>};
+export type Me = {initial_administrator?:boolean;operational_owner_user_id?:string|null;must_change_password?:boolean;user:{id:string;name:string;email:string};workspace:{id:string;name:string};company:{id:string;base_currency:string;[key:string]:unknown};roles:string[];preferences:Preferences};
+export type AppContextValue = {recentRoutes:string[];me:Me;resources:Record<string,Resource>;locale:Locale;t:(key:string)=>string;prefs:Preferences;savePrefs:(prefs:Preferences)=>Promise<void>;notify:(message:string,type?:'success'|'error')=>void;navigate:(path:string)=>void;refreshKey:number;refresh:()=>void;updateUser:(user:Me['user'])=>void;label:(resource:Resource|Field)=>string};
+

@@ -1,0 +1,10 @@
+.configuration-help{margin:-10px 0 18px;font-size:calc(12px * var(--ui-scale,1));color:var(--muted)}
+.configuration-help.compact{margin:0 0 18px}
+.configuration-help>summary{display:flex;align-items:center;gap:6px;width:fit-content;cursor:pointer;list-style:none;color:var(--primary);padding:4px 0}
+.configuration-help>summary::-webkit-details-marker{display:none}
+.configuration-help>summary:focus-visible{outline:2px solid var(--primary);outline-offset:4px;border-radius:3px}
+.configuration-help-body{margin-top:10px;padding:15px 18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);line-height:1.7;max-width:980px}
+.configuration-help-body p:last-child{margin-bottom:0}
+.configuration-help-body ul{padding-left:20px;margin:10px 0 0}
+.configuration-help-body li+li{margin-top:7px}
+.field .field-help{line-height:1.6;color:var(--muted)}

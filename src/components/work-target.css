@@ -1,0 +1,20 @@
+.work-target-fields{min-width:0;margin:4px 0;padding:15px;border:1px solid var(--border);border-radius:var(--radius)}
+.work-target-fields legend{padding:0 5px;color:var(--muted);font-size:calc(12px * var(--ui-scale,1))}
+.work-target-fields .form-grid{margin:0;gap:12px}
+.work-target-fields>.field-help{display:block;margin-top:10px;color:var(--muted)}
+.work-target-link{display:flex;gap:16px;align-items:center;margin:12px 0 20px;padding:13px 16px;background:var(--background);border:1px solid var(--border);border-radius:var(--radius)}
+.work-target-link>span{font-size:calc(12px * var(--ui-scale,1));color:var(--muted)}
+.work-target-link button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;text-align:left;overflow-wrap:anywhere}
+.work-target-link small{color:var(--muted);font-size:calc(11px * var(--ui-scale,1))}
+.delegation-guide{color:var(--muted);font-size:calc(12px * var(--ui-scale,1));margin:-8px 0 18px;line-height:1.6}
+.delegation-guide.compact{margin:0 0 18px}
+.delegation-guide>p{margin:0 0 7px}
+.delegation-guide details{max-width:800px}
+.delegation-guide summary{cursor:pointer;color:var(--text);width:fit-content}
+.delegation-guide details p{margin:8px 0}
+.delegation-access-status{display:flex;flex-wrap:wrap;align-items:center;gap:7px 16px;font-size:calc(12px * var(--ui-scale,1));border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin:0 0 18px}
+.delegation-access-status>strong{font-weight:500;color:var(--muted)}
+.delegation-access-status p{flex-basis:100%;margin:2px 0;color:var(--muted);line-height:1.5}
+.delegation-scope-tabs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:20px}
+.delegation-scope-tabs button{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--muted);padding:8px 13px;font:inherit;font-size:calc(12px * var(--ui-scale,1));cursor:pointer}
+.delegation-scope-tabs button[aria-pressed=true]{color:var(--primary);border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--surface))}

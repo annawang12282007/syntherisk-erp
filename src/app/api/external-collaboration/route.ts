@@ -1,0 +1,4 @@
+import {handle,body} from '@/lib/http';
+import {sharedList,sharedDetail,shareSelected,sharedAction,sharedAttachment} from '@/integrations/collaboration';
+export async function GET(r:Request){return handle(r,async ctx=>{const p=new URL(r.url).searchParams;if(p.has('attachment')){const file=await sharedAttachment(ctx,p.get('id')??'',p.get('attachment'));return new Response(new Uint8Array(file.bytes),{headers:{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename*=UTF-8''${encodeURIComponent(file.filename).replace(/'/g,'%27')}`,'X-Content-Type-Options':'nosniff'}});}return p.get('id')?sharedDetail(ctx,p.get('id')!):sharedList(ctx,p.get('mode')??'received',p.get('provider')??undefined);});}
+export async function POST(r:Request){return handle(r,async ctx=>{const {action,...data}=await body(r);return action==='share'?shareSelected(ctx,data):sharedAction(ctx,{action,...data});});}

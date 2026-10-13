@@ -1,0 +1,11 @@
+import {words} from '../locales';
+export class ApiError extends Error {constructor(public status:number,public code:string,message:string){super(message);}}
+export async function api<T=unknown>(url:string,options:RequestInit={}):Promise<T>{
+  let response:Response;try {response=await fetch(url,{credentials:'same-origin',...options,headers:{...(options.body && !(options.body instanceof FormData)?{'Content-Type':'application/json'}:{}),...options.headers}});} catch {throw new ApiError(0,'networkError','Network unavailable');}
+  const parsed=await response.json().catch(()=>({})),body=parsed&&typeof parsed==='object'?parsed:{};if(!response.ok)throw new ApiError(response.status,body.error?.code || body.code || 'error',body.error?.message || body.message || response.statusText);
+  return (body.data === undefined ? body : body.data) as T;
+}
+export const post=<T=unknown>(url:string,data:unknown)=>api<T>(url,{method:'POST',body:JSON.stringify(data)});
+export function downloadFile(name:string,content:string,type='application/json'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+export function responseFileName(response:Response,fallback:string){const disposition=response.headers.get('Content-Disposition')||'';const encoded=disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];if(encoded){try{return decodeURIComponent(encoded);}catch{return fallback;}}return disposition.match(/filename="([^"]+)"/i)?.[1]||disposition.match(/filename=([^;]+)/i)?.[1]?.trim()||fallback;}
+export function errorMessage(error:unknown,t:(key:string)=>string):string {if(error instanceof ApiError){if(error.status===0)return t('networkError');if(error.status===429)return t('rateLimitRetry');if(Object.hasOwn(words,error.code))return t(error.code);const key=`error_${error.code.toLowerCase()}`;if(Object.hasOwn(words,key))return t(key);if(error.status===401)return t('sessionExpired');if(error.status===403)return t('forbidden');if(error.status===409)return t('conflict');return `${t('error')}. ${t('noErrorDetail')}`;}return error instanceof SyntaxError?t('invalid'):error instanceof Error?error.message:t('error');}

@@ -1,0 +1,71 @@
+name: syntherisk-erp
+x-service: &service
+  image: ${ERP_IMAGE:?Run pnpm setup:compose or configure a unique ERP_IMAGE}
+  build:
+    context: .
+    args:
+      NEXT_PUBLIC_SOURCE_URL: ${NEXT_PUBLIC_SOURCE_URL:-https://github.com/annawang12282007/syntherisk-erp}
+      NEXT_PUBLIC_LICENSE_URL: ${NEXT_PUBLIC_LICENSE_URL:-https://github.com/annawang12282007/syntherisk-erp/blob/main/LICENSE}
+  env_file: .env.compose
+  environment:
+    NODE_ENV: production
+    DATABASE_URL: postgresql://syntherisk_erp:${POSTGRES_PASSWORD:?Run pnpm setup:compose}@db:5432/syntherisk_erp
+    ATTACHMENT_DIR: /app/data/attachments
+    NEXT_TELEMETRY_DISABLED: '1'
+  volumes:
+    - attachments:/app/data/attachments
+    - backups:/app/backups
+  init: true
+services:
+  db:
+    image: postgres:18.4-bookworm
+    environment:
+      POSTGRES_USER: syntherisk_erp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run setup-compose}
+      POSTGRES_DB: syntherisk_erp
+    volumes:
+      - database:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U syntherisk_erp -d syntherisk_erp']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    <<: *service
+    command: ['node','node_modules/prisma/build/index.js','migrate','deploy']
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: 'no'
+  app:
+    <<: *service
+    ports:
+      - '127.0.0.1:${ERP_PORT:-3030}:3000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD','node','-e',"fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+  worker:
+    <<: *service
+    command: ['node','--import','tsx','scripts/worker.ts']
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:v1.31.4
+    profiles: ['mail']
+    ports:
+      - '127.0.0.1:8025:8025'
+      - '127.0.0.1:1025:1025'
+    restart: unless-stopped
+volumes:
+  database:
+  attachments:
+  backups:

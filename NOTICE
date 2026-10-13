@@ -1,0 +1,12 @@
+Syntherisk ERP
+Copyright (c) 2026 Syntherisk ERP contributors
+
+This program is distributed under GNU AGPL version 3 only.
+See LICENSE for the complete terms and absence of warranty.
+
+Third-party packages and fonts retain their own copyright and licenses.
+See docs/THIRD_PARTY.json and the respective package license files.
+The project name and brand assets do not grant rights to imply endorsement.
+
+This independent open-source edition includes workforce operations and
+generic deployment defaults. It contains no customer/company runtime data.

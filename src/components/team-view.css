@@ -1,0 +1,25 @@
+.team-member-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;padding:8px 20px 20px}
+.team-member{display:flex;align-items:flex-start;gap:13px;width:100%;min-width:0;text-align:left;border:0;border-bottom:1px solid var(--border);background:transparent;color:var(--text);padding:22px 0;font:inherit;cursor:pointer}
+.team-member:hover .team-member-info>strong{color:var(--primary)}
+.team-member>.avatar{flex-shrink:0}
+.team-member>.badge{margin-left:auto}
+.team-member-info{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:calc(12px * var(--ui-scale,1));overflow-wrap:anywhere}
+.team-member-info>strong{font-size:calc(15px * var(--ui-scale,1))}
+.team-member-info>.role-tags{margin:1px 0 4px}
+.team-contact-line{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.team-contact-line svg{flex-shrink:0}
+.team-person-heading{display:flex;align-items:center;gap:15px;margin:0 0 25px}
+.team-person-heading>.badge{margin-left:auto}
+.team-person-heading .role-tags{margin-top:7px}
+.team-contact-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 25px;margin:17px 0 25px}
+.team-contact-details dt{font-size:calc(12px * var(--ui-scale,1));color:var(--muted);margin-bottom:6px}
+.team-contact-details dd{font-size:calc(13px * var(--ui-scale,1));margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.team-private-section{border-top:1px solid var(--border);padding-top:17px}
+.team-private-section summary{cursor:pointer;font-size:calc(13px * var(--ui-scale,1));font-weight:600}
+.team-form-fields{border:0;padding:0;margin:0;min-width:0}
+.team-form-fields h3{margin:8px 0 18px}
+.team-form-fields>.form-grid{margin-bottom:24px}
+@media(max-width:850px){.team-member-grid{grid-template-columns:1fr}}
+@media(max-width:550px){.team-contact-details{grid-template-columns:1fr}.team-member-grid{padding:4px 14px 15px}.team-member{gap:10px}.team-member>.badge{font-size:calc(10px * var(--ui-scale,1))}}
+
+.team-board{margin-top:24px}.team-member-controls{display:flex;align-items:center;flex-wrap:wrap;gap:15px;padding:12px 0;border-bottom:1px solid var(--border)}.team-member-controls>label:first-child{flex:1;min-width:180px}.team-member-controls select{max-width:180px}

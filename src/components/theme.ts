@@ -1,0 +1,8 @@
+import type {Theme} from './types';
+export const defaultTheme:Theme={mode:'light',primary:'#327A79',background:'#F4F7F7',surface:'#FFFFFF',text:'#173341',border:'#DCE5E7',fontSize:14,uiFontSize:14,radius:7,density:'standard'};
+export const darkTheme={primary:'#70BCB9',background:'#10232C',surface:'#19333F',text:'#E7F0F1',border:'#33505B'};
+let activePreview:Theme|null=null;
+export function beginThemePreview(theme:Theme){activePreview=theme;applyTheme(theme);}
+export function endThemePreview(saved:Theme){activePreview=null;applyTheme(saved);}
+export function applyTheme(saved:Theme){const theme=activePreview??saved;const root=document.documentElement;const dark=theme.mode==='dark'||(theme.mode==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);const tokens=theme.mode==='custom'?theme:dark?darkTheme:defaultTheme;for(const key of ['primary','background','surface','text','border'] as const)root.style.setProperty(`--${key}`,tokens[key]);root.style.setProperty('--font-size',`${theme.fontSize}px`);root.style.setProperty('--ui-scale',String((theme.uiFontSize??14)/14));root.style.setProperty('--radius',`${theme.radius}px`);root.dataset.theme=dark?'dark':theme.mode;root.dataset.density=theme.density;root.style.colorScheme=dark?'dark':'light';}
+export function contrast(a:string,b:string){function lum(hex:string){const values=hex.replace('#','').match(/.{2}/g)?.map(v=>parseInt(v,16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4)||[0,0,0];return values[0]*.2126+values[1]*.7152+values[2]*.0722;}const la=lum(a),lb=lum(b);return (Math.max(la,lb)+.05)/(Math.min(la,lb)+.05);}

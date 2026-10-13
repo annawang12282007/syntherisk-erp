@@ -1,0 +1,17 @@
+.appearance-settings .appearance-save-hint{margin:-10px 0 22px;color:var(--muted)}
+.appearance-settings .theme-choice{display:flex;flex-direction:column;gap:8px}
+.appearance-settings .theme-choice .theme-mini{width:100%;flex-shrink:0}
+.appearance-settings .theme-choice>span:nth-child(2){display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:calc(12px * var(--ui-scale,1));font-weight:600;padding:0 2px}
+.appearance-settings .theme-choice>small{font-size:calc(11px * var(--ui-scale,1));line-height:1.6;color:var(--muted);padding:0 2px}
+.appearance-section{min-width:0;border:0;margin:24px 0 0;padding:20px 0 0;border-top:1px solid var(--border)}
+.appearance-section legend{padding:0 8px 0 0;font-size:calc(14px * var(--ui-scale,1));font-weight:700;color:var(--text)}
+.appearance-section>p{font-size:calc(12px * var(--ui-scale,1));color:var(--muted);line-height:1.6;margin:0 0 18px}
+.appearance-mode-summary{padding:15px 17px;border:1px solid var(--border);border-radius:var(--radius);background:var(--background);font-size:calc(12px * var(--ui-scale,1))}
+.appearance-mode-summary p{margin:6px 0;color:var(--text)}
+.appearance-mode-summary>span{color:var(--muted);font-size:calc(11px * var(--ui-scale,1))}
+.appearance-settings .appearance-preview h3{font-size:calc(var(--font-size) * 1.2857)}
+.appearance-settings .appearance-preview>p{font-size:var(--font-size);line-height:1.6}
+.appearance-sample-label{display:inline-flex;align-items:center;padding:3px 8px;border:1px solid var(--border);border-radius:4px;font-size:calc(11px * var(--ui-scale,1));color:var(--muted);background:var(--surface)}
+.appearance-settings .appearance-example-line{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:16px 0 0;padding:var(--row-pad) 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);font-size:var(--font-size)}
+.appearance-settings .appearance-example-button{cursor:default;flex-shrink:0}
+@media(max-width:700px){.appearance-settings .theme-mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.appearance-settings .theme-choice{padding:9px}.appearance-settings .theme-choice>small{font-size:calc(11px * var(--ui-scale,1))}.appearance-preview>div{flex-wrap:wrap}.appearance-settings .appearance-example-line{align-items:flex-start;flex-wrap:wrap}}

@@ -1,0 +1,29 @@
+'use client';
+import {useEffect,useState,useCallback} from 'react';
+import {signatureArtwork} from '@/lib/signature-artwork';
+import ImageSizeControl from './image-size-control';
+import {useApp} from './context';
+import {api,errorMessage} from './api';
+import {Button,ErrorBanner,Spinner,Modal} from './primitives';
+import type {SignatureProfile as Profile} from '@/lib/signature-profile';
+
+export default function SignatureProfile(){
+ const {t,me,notify}=useApp();
+ const [displayWidth,setDisplayWidth]=useState(280);
+ const [profile,setProfile]=useState<Profile|null>(null),[mode,setMode]=useState('generated'),[style,setStyle]=useState('script'),[image,setImage]=useState(''),[signatureText,setSignatureText]=useState(''),[name,setName]=useState(''),[selected,setSelected]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[deleting,setDeleting]=useState(false);
+ const load=useCallback((result:Profile)=>{setDisplayWidth(result.display_width??280);setProfile(result);setMode(result.mode);setStyle(result.style);setSignatureText(result.signature_text);setName(result.saved_version?result.label:t('signatureDefaultLabel'));setSelected(String(result.saved_version||''));setImage('');},[t]);
+ useEffect(()=>{api<Profile>('/api/signature-profile').then(load).catch(e=>setError(errorMessage(e,t)));},[me.user.id,load,t]);
+ const preview=image||(profile?.mode==='uploaded'?profile.data_url:'');
+ async function save(activate=false){if(!profile)return;setBusy(true);setError('');try{const result=await api<Profile>('/api/signature-profile',{method:activate?'POST':'PUT',body:JSON.stringify(activate?{action:'activate',revision:Number(selected),version:profile.version}:{mode,style,display_width:displayWidth,signature_text:signatureText,label:name,version:profile.version,...(image?{image}:{})})});load(result);notify(t('saved'));}catch(e){setError(errorMessage(e,t));}finally{setBusy(false);}}
+ return <section className="signature-profile"><h3>{t('signaturePersonal')}</h3>{error&&<ErrorBanner message={error}/>}{!profile?!error&&<Spinner/>:<>
+ <div className="field"><label htmlFor="signature-version">{t('signatureSavedVersions')}</label><select id="signature-version" value={selected} disabled={busy} onChange={e=>setSelected(e.target.value)}><option value="">{t('select')}</option>{profile.versions.map(v=><option key={v.revision} value={v.revision}>{v.label} · v{v.revision}{profile.saved_version===v.revision?' · '+t('signatureActive'):''}</option>)}</select></div>
+ <Button disabled={busy||!selected||Number(selected)===profile.saved_version} onClick={()=>void save(true)}>{t('signatureActivate')}</Button>
+ <Button disabled={busy||!selected} onClick={()=>setDeleting(true)}>{t('signatureDeleteVersion')}</Button>
+ <div className="field"><label htmlFor="signature-label">{t('signatureVersionLabel')}</label><input id="signature-label" maxLength={100} value={name} disabled={busy} onChange={e=>setName(e.target.value)}/></div>
+ <fieldset className="permission-choices" disabled={busy}><legend>{t('signatureAppearance')}</legend>{['generated','uploaded'].map(value=><label key={value}><input type="radio" name="signature-mode" value={value} checked={mode===value} onChange={()=>{setMode(value);setError('');}}/>{t(`signatureMode_${value}`)}</label>)}</fieldset>
+ <div className="field"><label htmlFor="signature-text">{t('signatureCustomText')}</label><input id="signature-text" maxLength={120} value={signatureText} disabled={busy} onChange={e=>setSignatureText(e.target.value)}/><small>{t('signatureCustomTextHint')}</small></div>
+ {mode==='uploaded'?<div className="field"><label htmlFor="signature-upload">{t('signatureUpload')}</label><input id="signature-upload" disabled={busy} type="file" accept="image/png,image/jpeg" onChange={e=>{const file=e.target.files?.[0];if(!file)return;if(!['image/png','image/jpeg'].includes(file.type)||file.size>1048576){setError(t('SIGNATURE_IMAGE_TOO_LARGE'));return;}const reader=new FileReader();reader.onload=()=>{setImage(String(reader.result));setError('');};reader.onerror=()=>setError(t('SIGNATURE_IMAGE_INVALID'));reader.readAsDataURL(file);}}/>{preview&&<img className="personal-signature-image" style={{width:displayWidth,maxWidth:'100%',maxHeight:'none',height:'auto'}} src={preview} alt={t('signatureAppearance')}/>}</div>:<><div className="field"><label htmlFor="signature-style">{t('signatureStyle')}</label><select id="signature-style" value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}>{['script','serif','clean'].map(value=><option key={value} value={value}>{t(`signatureStyle_${value}`)}</option>)}</select></div><img className="personal-signature-image" src={'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(signatureArtwork(signatureText,style))} alt={t('signatureAppearance')} style={{width:displayWidth,maxWidth:'100%',height:'auto',maxHeight:'none'}}/></>}
+ <ImageSizeControl value={displayWidth} onChange={setDisplayWidth} disabled={busy}/>
+ <p className="muted small">{t('signatureAppearanceHint')}</p><Button disabled={busy||!signatureText.trim()||!name.trim()||mode==='uploaded'&&!preview} onClick={()=>void save()}>{t(busy?'saving':'signatureSaveVersion')}</Button>
+ </>}{deleting&&profile&&<Modal title={t('signatureDeleteVersion')} onClose={()=>{if(!busy)setDeleting(false);}} footer={<><Button disabled={busy} onClick={()=>setDeleting(false)}>{t('cancel')}</Button><Button disabled={busy} onClick={async()=>{setBusy(true);setError('');try{load(await api<Profile>('/api/signature-profile',{method:'DELETE',body:JSON.stringify({revision:Number(selected),version:profile.version})}));setDeleting(false);notify(t('saved'));}catch(e){setError(errorMessage(e,t));setDeleting(false);}finally{setBusy(false);}}}>{t('confirm')}</Button></>}><p>{profile.versions.find(v=>v.revision===Number(selected))?.label} · v{selected}</p><p>{t('signatureDeleteHint')}</p></Modal>}</section>;
+}

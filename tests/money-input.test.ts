@@ -1,0 +1,3 @@
+import {expect,it} from 'vitest';
+import {majorToMinor,minorToMajor} from '../src/components/money-input';
+it('converts user amounts without floating point or cents-entry conventions',()=>{expect(majorToMinor('12.34',2)).toBe('1234');expect(majorToMinor('90071992547409.91',2)).toBe('9007199254740991');expect(majorToMinor('-10.5',2)).toBe('-1050');expect(majorToMinor('1.',2)).toBe('100');expect(majorToMinor('1.234',2)).toBeNull();expect(majorToMinor('12',0)).toBe('12');expect(majorToMinor('12.1',0)).toBeNull();expect(minorToMajor('-1',2)).toBe('-0.01');expect(minorToMajor('1234',2)).toBe('12.34');});

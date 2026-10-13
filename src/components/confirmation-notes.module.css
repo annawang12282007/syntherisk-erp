@@ -1,0 +1,9 @@
+.input{margin:16px 0}
+.input textarea{min-height:90px;resize:vertical}
+.notes{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.notes>li{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;min-width:0}
+.metadata{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;overflow-wrap:anywhere}
+.metadata small{color:var(--muted)}
+.body{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0}
+.people{padding-left:20px;display:grid;gap:12px}
+.history{margin-top:22px}

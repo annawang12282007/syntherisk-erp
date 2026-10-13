@@ -1,0 +1,12 @@
+'use client';
+import {useEffect,useState} from 'react';
+import {FileSignature,RefreshCw} from 'lucide-react';
+import {useApp} from './context';
+import {api,errorMessage} from './api';
+import {Button,Empty,ErrorBanner,Spinner} from './primitives';
+type Item={id:string;resource:string;record_id:string;title:string;kind:string;date:string;action:string;stale?:boolean};
+export default function ApprovalInbox(){
+ const {t,navigate,resources,label,locale,prefs}=useApp();const [data,setData]=useState<{signatures:Item[];approvals:Item[]}|null>(null),[error,setError]=useState(''),[tab,setTab]=useState<'signatures'|'approvals'>('signatures'),[revision,setRevision]=useState(0);
+ useEffect(()=>{let active=true;api<typeof data>('/api/approval-inbox').then(result=>{if(active){setData(result);setError('');}}).catch(e=>{if(active)setError(errorMessage(e,t));});return()=>{active=false;};},[revision]);
+ return <section><div className="page-heading"><div><h1>{t('approvalInbox')}</h1><p>{t('approvalInboxHint')}</p></div><div className="heading-actions"><Button onClick={()=>navigate('/settings?section=profile')}>{t('signaturePersonal')}</Button><Button icon={RefreshCw} onClick={()=>setRevision(n=>n+1)}>{t('refresh')}</Button></div></div><div className="segmented text-segments">{(['signatures','approvals'] as const).map(value=><button key={value} aria-pressed={tab===value} onClick={()=>setTab(value)}>{t(value==='signatures'?'pendingSignatures':'pendingApprovals')} {data?.[value].length??''}</button>)}</div>{error&&<ErrorBanner message={error}/>} {!data&&!error?<Spinner/>:data?.[tab].length?<div className="data-panel notification-list">{data[tab].map(item=><article key={item.id}><FileSignature size={20}/><div><strong>{item.title}</strong><p>{resources[item.resource]?label(resources[item.resource]):item.resource} · {tab==='signatures'?item.kind:t(item.kind)}</p>{item.stale&&<p className="muted">{t('signatureRequestStale')}</p>}<small>{new Date(item.date).toLocaleString(locale,{timeZone:prefs.timezone||'America/Los_Angeles'})}</small></div><Button variant="primary" onClick={()=>navigate(`/data/${item.resource}?record=${item.record_id}&tab=${tab==='signatures'?'signatures':'workflow'}`)}>{t(tab==='signatures'?'signatureReviewAndSign':'reviewAndProcess')}</Button></article>)}</div>:<Empty title={t(tab==='signatures'?'pendingSignaturesEmpty':'pendingApprovalsEmpty')} description={t('approvalEmptyHint')}/>}</section>;
+}
