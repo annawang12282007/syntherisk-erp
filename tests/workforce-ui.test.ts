@@ -2,6 +2,7 @@ import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {describe,expect,it,vi} from 'vitest';
 import {AttendanceTable,ClockCard,PayrollList,ShiftList,WorkforcePaySegment,WorkforceRateAmount,workforceMinorInput} from '../src/components/workforce-view';
+import {WorkforceCalendar} from '../src/components/workforce-calendar';
 import {translate} from '../src/locales';
 import type {WorkforceData,WorkforceAttendance} from '../src/lib/workforce-types';
 
@@ -38,6 +39,18 @@ describe('workforce user interface boundaries',()=>{
  it('renders shift times in the configured work zone and displays its explicit day type',()=>{
   const html=renderToStaticMarkup(createElement(ShiftList,{data:{...data,shifts:[{id:'shift-1',user_id:'worker-1',user_name:'Employee',title:'Opening shift',notes:'',start_at:'2026-10-11T01:00:00.000Z',end_at:'2026-10-11T10:00:00.000Z',unpaid_break_minutes:60,day_type:'regular',status:'published',version:1}]},busy:false,run,edit:()=>{}}));
   expect(html).toContain('09:00–18:00');expect(html).toContain('一般工作日');expect(html).not.toContain('休息日');expect(html).not.toContain('取消班次');
+ });
+ it('shows an overnight shift on both local calendar dates with read-only employee controls',()=>{
+  const shift={id:'night-1',user_id:'worker-1',user_name:'Employee',title:'Night shift',notes:'',start_at:'2026-10-12T14:00:00.000Z',end_at:'2026-10-12T18:00:00.000Z',unpaid_break_minutes:0,day_type:'regular' as const,status:'published' as const,version:1};
+  const html=renderToStaticMarkup(createElement(WorkforceCalendar,{data:{...data,shifts:[shift]},month:'2026-10-01',busy:false,onMonthChange:()=>{},onCreate:()=>{},onSelect:()=>{}}));
+  expect(html.match(/class="[^"]*eventTitle[^"]*">Night shift/g)).toHaveLength(2);
+  expect(html).toContain('22:00–24:00');expect(html).toContain('00:00–02:00');expect(html).toContain('data-date="2026-10-12"');expect(html).toContain('data-date="2026-10-13"');
+  expect(html).not.toContain(translate('zh-TW','workforceAddShiftOn'));expect(html).not.toContain('取消班次');expect(html).toContain('aria-current="date"');
+ });
+ it('offers date-specific creation only to schedule managers and disables it while saving',()=>{
+  const html=renderToStaticMarkup(createElement(WorkforceCalendar,{data:{...data,capabilities:{...data.capabilities,manage_schedule:true}},month:'2026-10-01',busy:true,onMonthChange:()=>{},onCreate:()=>{},onSelect:()=>{}}));
+  expect(html).toContain('2026年10月12日');expect(html).toContain('disabled="" aria-label="');expect(html).toContain('新增班次');
+  for(const button of html.match(/<button\b[^>]*>/g)||[])expect(button).toContain('disabled=""');
  });
  it('does not offer approval or corrections to an ordinary worker or an open clock record',()=>{
   const html=renderToStaticMarkup(createElement(AttendanceTable,{data:{...data,attendance:[attendance]},busy:false,run,edit:()=>{}}));

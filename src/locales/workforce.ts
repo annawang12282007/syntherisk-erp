@@ -7,6 +7,8 @@ export const workforceWords={
  workforceMonthlyBaseIncluded:['已包含於固定月薪','已包含于固定月薪','Included in fixed monthly pay'],
  workforceSubtitle:['安排班次、記錄出勤，從已核准工時計算薪資。','安排班次、记录出勤，从已核准工时计算薪资。','Plan shifts, record attendance and calculate pay from approved hours.'],
  workforceOverview:['工作總覽','工作总览','Overview'],workforceSchedule:['排班','排班','Schedule'],workforceAttendance:['出勤','出勤','Attendance'],workforcePayroll:['薪資','薪资','Payroll'],workforceSettings:['薪勤設定','薪勤设置','Workforce settings'],
+ workforceCalendar:['行事曆','日历','Calendar'],workforceList:['清單','列表','List'],workforcePreviousMonth:['上一個月','上个月','Previous month'],workforceNextMonth:['下一個月','下个月','Next month'],workforceToday:['今天','今天','Today'],workforceShiftDetails:['班次詳情','班次详情','Shift details'],workforceAddShiftOn:['新增班次於','新增班次于','Add shift on'],
+ workforceCalendarHint:['點選班次查看詳情。','点击班次查看详情。','Select a shift to view its details.'],workforceCalendarManageHint:['使用日期旁的 ＋ 可直接安排當日班次。','使用日期旁的 ＋ 可直接安排当天班次。','Use the + beside a date to schedule a shift on that day.'],workforceContinuedShift:['續前日班次','续前日班次','From previous day'],workforceContinuesNextDay:['延續至翌日','延续至次日','Continues next day'],
  workforceMine:['我的紀錄','我的记录','My records'],workforceTeam:['全體人員','全体人员','All workers'],
  workforceFrom:['開始日','开始日','From'],workforceThrough:['截止日（含）','截止日（含）','Through (inclusive)'],
  workforceClock:['我的打卡','我的打卡','My time clock'],workforceOffClock:['尚未上班打卡','尚未上班打卡','Not clocked in'],workforceOnClock:['上班中','上班中','Clocked in'],workforceOnBreak:['休息中','休息中','On break'],
